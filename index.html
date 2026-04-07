@@ -29,6 +29,17 @@
 ">
   （計測未実施）
 </div>
+
+<div id="log" style="
+  border: 1px solid #ccc;
+  padding: 10px;
+  height: 200px;
+  overflow-y: auto;
+  font-size: 14px;
+  white-space: pre-wrap;
+">
+  （発話ログ表示）
+</div>
 <h1>音声入力 PoC</h1>
 
 <p>
@@ -51,8 +62,14 @@
   // ★ カウンター
   let irasshaimaseCount = 0;
 
-  // ★ 重複防止用
+  // ★ 重複防止
   let lastFinalTranscript = "";
+
+  // ★ 表示ログ
+  let logText = "";
+
+  // ★ 表記ゆれ対応正規表現
+  const IRASSHAIMASE_REGEX = /いらっしゃいませ[ー！!。]?/g;
 
   function startRecognition() {
     if (!SpeechRecognition) {
@@ -61,9 +78,11 @@
       return;
     }
 
-    // ★ 計測開始時にリセット
+    // ★ 初期化
     irasshaimaseCount = 0;
     lastFinalTranscript = "";
+    logText = "";
+    document.getElementById("log").textContent = "";
     document.getElementById("summary").textContent = "（計測中…）";
 
     if (!recognition) {
@@ -77,12 +96,16 @@
         if (!result.isFinal) return;
 
         const transcript = result[0].transcript.trim();
-        if (transcript === lastFinalTranscript) return;
+        if (!transcript || transcript === lastFinalTranscript) return;
 
         lastFinalTranscript = transcript;
 
-        // ★「いらっしゃいませ」をカウント（複数回対応）
-        const matches = transcript.match(/いらっしゃいませ/g);
+        // ★ 発話ログ表示
+        logText += transcript + "\n";
+        document.getElementById("log").textContent = logText;
+
+        // ★ 表記ゆれ対応カウント
+        const matches = transcript.match(IRASSHAIMASE_REGEX);
         if (matches) {
           irasshaimaseCount += matches.length;
         }
@@ -103,11 +126,11 @@
     isRunning = false;
     if (recognition) recognition.stop();
 
-    // ★ 結果表示（目立つ形）
     document.getElementById("summary").textContent =
       `「いらっしゃいませ」発話回数： ${irasshaimaseCount} 回`;
   }
 </script>
+``
 ``
 </body>
 </html>
