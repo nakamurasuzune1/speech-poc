@@ -1,45 +1,12 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>音声入力 PoC（30分対応）</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-    }
-    button {
-      font-size: 18px;
-      padding: 10px 20px;
-      margin-right: 10px;
-    }
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-      white-space: pre-wrap;
-    }
-  </style>
-</head>
-<body>
-
-<h1>音声入力 PoC</h1>
-
-<p>
-  本PoCでは音声を保存せず、<br>
-  マイク入力を用いてキーワード出現傾向を確認します。
-</p>
-
-<button onclick="startRecognition()">🎤 計測開始</button>
-<button onclick="stopRecognition()">⏹ 計測停止</button>
-
-<div id="result">（待機中）</div>
-
 <script>
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
 
   let recognition;
   let isRunning = false;
+
+  // ★ 여기が重要：蓄積用変数
+  let accumulatedText = "";
 
   function startRecognition() {
     if (!SpeechRecognition) {
@@ -55,11 +22,17 @@
       recognition.continuous = true;
 
       recognition.onresult = (event) => {
-        let text = "";
+        let currentText = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          text += event.results[i][0].transcript;
+          currentText += event.results[i][0].transcript;
         }
-        document.getElementById("result").textContent = text;
+
+        // ★ 確定した音声だけを蓄積
+        if (event.results[event.results.length - 1].isFinal) {
+          accumulatedText += currentText + "\n";
+        }
+
+        document.getElementById("result").textContent = accumulatedText;
       };
 
       recognition.onerror = (event) => {
@@ -68,7 +41,7 @@
 
       recognition.onend = () => {
         if (isRunning) {
-          // ★ マイク自動再起動（30分PoCのキモ）
+          // ★ マイク自動再起動
           setTimeout(() => {
             recognition.start();
           }, 200);
@@ -77,18 +50,11 @@
     }
 
     isRunning = true;
-    document.getElementById("result").textContent = "（聞き取り中…）";
     recognition.start();
   }
 
   function stopRecognition() {
     isRunning = false;
-    if (recognition) {
-      recognition.stop();
-    }
-    document.getElementById("result").textContent = "（停止）";
+    if (recognition) recognition.stop();
   }
 </script>
-
-</body>
-</html>
