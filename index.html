@@ -40,11 +40,11 @@
 ">
   （発話ログ表示）
 </div>
-<h1>音声入力 PoC</h1>
+<h1>あいさつカウンター</h1>
 
 <p>
-  本PoCでは音声を保存せず、<br>
-  マイク入力を用いてキーワード出現傾向を確認します。
+  本実験では音声を保存せず、<br>
+  マイク入力を用いてあいさつの回数を確認します。
 </p>
 
 <button onclick="startRecognition()">🎤 計測開始</button>
@@ -127,7 +127,7 @@
     if (recognition) recognition.stop();
 
     document.getElementById("summary").textContent =
-      `「いらっしゃいませ」発話回数： ${irasshaimaseCount} 回`;
+      `あいさつ（「いらっしゃいませ」のみの）発話回数： ${irasshaimaseCount} 回`;
   }
 </script>
 ``
