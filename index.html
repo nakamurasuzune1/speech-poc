@@ -1,3 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>音声入力 PoC（30分対応）</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin-right: 10px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+<h1>音声入力 PoC</h1>
+
+<p>
+  本PoCでは音声を保存せず、<br>
+  マイク入力を用いてキーワード出現傾向を確認します。
+</p>
+
+<button onclick="startRecognition()">🎤 計測開始</button>
+<button onclick="stopRecognition()">⏹ 計測停止</button>
+
+<div id="result">（待機中）</div>
+
 <script>
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -58,3 +94,6 @@
     if (recognition) recognition.stop();
   }
 </script>
+
+</body>
+</html>
