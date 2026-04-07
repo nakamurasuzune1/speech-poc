@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>音声入力 PoC</title>
+  <title>音声入力 PoC（30分対応）</title>
   <style>
     body {
       font-family: sans-serif;
@@ -16,62 +16,79 @@
     #result {
       margin-top: 20px;
       font-size: 18px;
-      color: #333;
       white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
 
-  <h1>音声入力 PoC</h1>
+<h1>音声入力 PoC</h1>
 
-  <p>
-    このページでは音声を保存せず、<br>
-    話した内容を一時的に表示します。
-  </p>
+<p>
+  本PoCでは音声を保存せず、<br>
+  マイク入力を用いてキーワード出現傾向を確認します。
+</p>
 
-  <button id="startBtn">🎤 計測開始</button>
-  <button id="stopBtn">⏹ 計測停止</button>
+<button onclick="startRecognition()">🎤 計測開始</button>
+<button onclick="stopRecognition()">⏹ 計測停止</button>
 
-  <div id="result">（ここに認識結果が表示されます）</div>
+<div id="result">（待機中）</div>
 
-  <script>
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+<script>
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
 
+  let recognition;
+  let isRunning = false;
+
+  function startRecognition() {
     if (!SpeechRecognition) {
       document.getElementById("result").textContent =
         "このブラウザは音声入力に対応していません。";
-    } else {
-      const recognition = new SpeechRecognition();
+      return;
+    }
+
+    if (!recognition) {
+      recognition = new SpeechRecognition();
       recognition.lang = "ja-JP";
       recognition.interimResults = true;
       recognition.continuous = true;
-
-      const resultDiv = document.getElementById("result");
 
       recognition.onresult = (event) => {
         let text = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
           text += event.results[i][0].transcript;
         }
-        resultDiv.textContent = text;
+        document.getElementById("result").textContent = text;
       };
 
       recognition.onerror = (event) => {
-        resultDiv.textContent = "エラー: " + event.error;
+        console.log("error:", event.error);
       };
 
-      document.getElementById("startBtn").onclick = () => {
-        resultDiv.textContent = "（聞き取り中…）";
-        recognition.start();
-      };
-
-      document.getElementById("stopBtn").onclick = () => {
-        recognition.stop();
+      recognition.onend = () => {
+        if (isRunning) {
+          // ★ マイク自動再起動（30分PoCのキモ）
+          setTimeout(() => {
+            recognition.start();
+          }, 200);
+        }
       };
     }
-  </script>
+
+    isRunning = true;
+    document.getElementById("result").textContent = "（聞き取り中…）";
+    recognition.start();
+  }
+
+  function stopRecognition() {
+    isRunning = false;
+    if (recognition) {
+      recognition.stop();
+    }
+    document.getElementById("result").textContent = "（停止）";
+  }
+</script>
 
 </body>
 </html>
