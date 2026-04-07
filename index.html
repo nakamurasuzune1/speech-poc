@@ -21,7 +21,14 @@
   </style>
 </head>
 <body>
-
+<div id="summary" style="
+  font-size: 28px;
+  font-weight: bold;
+  color: #d32f2f;
+  margin-bottom: 20px;
+">
+  （計測未実施）
+</div>
 <h1>音声入力 PoC</h1>
 
 <p>
@@ -41,17 +48,23 @@
   let recognition;
   let isRunning = false;
 
-  // ★ 蓄積結果
-  let accumulatedText = "";
-  // ★ 最後に追加した確定文
+  // ★ カウンター
+  let irasshaimaseCount = 0;
+
+  // ★ 重複防止用
   let lastFinalTranscript = "";
 
   function startRecognition() {
     if (!SpeechRecognition) {
-      document.getElementById("result").textContent =
+      document.getElementById("summary").textContent =
         "このブラウザは音声入力に対応していません。";
       return;
     }
+
+    // ★ 計測開始時にリセット
+    irasshaimaseCount = 0;
+    lastFinalTranscript = "";
+    document.getElementById("summary").textContent = "（計測中…）";
 
     if (!recognition) {
       recognition = new SpeechRecognition();
@@ -61,21 +74,18 @@
 
       recognition.onresult = (event) => {
         const result = event.results[event.results.length - 1];
-
         if (!result.isFinal) return;
 
         const transcript = result[0].transcript.trim();
-
-        // ★ 前回と同じ内容なら無視
         if (transcript === lastFinalTranscript) return;
 
         lastFinalTranscript = transcript;
-        accumulatedText += transcript + "\n";
-        document.getElementById("result").textContent = accumulatedText;
-      };
 
-      recognition.onerror = (event) => {
-        console.log("error:", event.error);
+        // ★「いらっしゃいませ」をカウント（複数回対応）
+        const matches = transcript.match(/いらっしゃいませ/g);
+        if (matches) {
+          irasshaimaseCount += matches.length;
+        }
       };
 
       recognition.onend = () => {
@@ -92,6 +102,10 @@
   function stopRecognition() {
     isRunning = false;
     if (recognition) recognition.stop();
+
+    // ★ 結果表示（目立つ形）
+    document.getElementById("summary").textContent =
+      `「いらっしゃいませ」発話回数： ${irasshaimaseCount} 回`;
   }
 </script>
 ``
