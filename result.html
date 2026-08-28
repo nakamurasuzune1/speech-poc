@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>あいさつカウンター</title>
+    <meta name="description" content="継続的なあいさつにつなげよう">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSS -->
+      <link rel="stylesheet" href="ress.css">
+      <link rel="stylesheet" href="style.css">
+  </head>
+<body>
+  
+<div class="header-info">
+  <p class="head">0000000 テスト太郎さん</p>
+  <p class="head">ログイン店舗：テスト店</p>
+</div>
+  
+<div class="align-center">
+<h2>お疲れさまでした！</h2>
+<p id="messageText" class="hidden"></p>
+
+<div id="treeArea"></div>
+  
+<div id="resultInfo" class="hidden">
+  <p id="countResult"></p>
+  <p id="timeResult"></p>
+  <p id="periodResult"></p>
+</div>
+
+  
+<button class="btn-green" id="recordBtn">
+結果を記録する
+</button>
+</div>
+
+<div class="align-center">
+<a href="index.pen.html">  
+<div class="btn-gray" id="backBtn">
+  
+  結果を送信せずにトップに戻る
+</div></a>
+
+</div>
+  
+<script>
+const count =
+ Number(
+   sessionStorage.getItem("count")
+ );
+  
+const startTime =
+ Number(
+   sessionStorage.getItem("startTime")
+ );
+
+const endTime =
+ Number(
+   sessionStorage.getItem("endTime")
+ );
+
+const startDate = new Date(startTime);
+const endDate = new Date(endTime);
+
+const startHour =
+  String(startDate.getHours()).padStart(2,"0");
+
+const startMin =
+  String(startDate.getMinutes()).padStart(2,"0");
+
+const endHour =
+  String(endDate.getHours()).padStart(2,"0");
+
+const endMin =
+  String(endDate.getMinutes()).padStart(2,"0");
+
+document.getElementById(
+  "periodResult"
+).textContent =
+  `計測時刻：${startHour}:${startMin} ～ ${endHour}:${endMin}`;
+
+const durationSec =
+ Math.floor(
+   (endTime - startTime) / 1000
+ );
+
+const minutes =
+ Math.floor(durationSec / 60);
+
+const seconds =
+ durationSec % 60;
+
+document.getElementById(
+  "countResult"
+).textContent =
+  `回数：${count}回`;
+
+document.getElementById(
+  "timeResult"
+).textContent =
+  `計測時間：${minutes}分${seconds}秒`;
+  
+const treeArea =
+  document.getElementById("treeArea");
+
+const durationMinute =
+  durationSec / 60;
+
+const rate =
+  count / durationMinute;
+
+const messageText =
+ document.getElementById("messageText");
+if(rate >= 5){
+  treeArea.innerHTML =
+    '<img src="flower-tree.png" id="treeImage" class="tree-grow">';
+  messageText.textContent =
+    "今日は笑顔の木に綺麗な花が咲きました！";
+}
+else if(rate >= 1){
+  treeArea.innerHTML =
+    '<img src="grown-tree.png" id="treeImage" class="tree-grow">';
+  messageText.textContent =
+    "今日も笑顔の木は元気に成長しました！";
+}
+else{
+  treeArea.innerHTML =
+    '<img src="sapling.png" id="treeImage" class="tree-grow">';
+  messageText.textContent =
+    "笑顔の木はまだ苗木です。次はもっと育ててみましょう！";
+}
+
+const treeImage =
+ document.getElementById("treeImage");
+treeImage.classList.add(
+ "grow-animation"
+);
+setTimeout(function(){
+  messageText.classList.remove(
+    "hidden"
+  );
+  messageText.classList.add(
+    "show"
+  );
+},2000);
+
+const resultInfo =
+ document.getElementById("resultInfo");
+setTimeout(function(){
+  resultInfo.classList.remove(
+    "hidden"
+  );
+  resultInfo.classList.add(
+    "show"
+  );
+},3000);
+
+</script>
+
+</body>
+</html>

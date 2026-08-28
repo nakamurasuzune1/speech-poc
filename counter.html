@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>あいさつカウンター</title>
+    <meta name="description" content="継続的なあいさつにつなげよう">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSS -->
+      <link rel="stylesheet" href="ress.css">
+      <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <div class= "header-info">
+    <p class="head">0000000 テスト太郎さん</p>
+    <p class="head">ログイン店舗：テスト店</p>
+      </div>
+    
+    <div class="align-center">
+      <p id="status">計測中…</p>
+    </div>
+    
+    <div class= "counter-circle">
+      <p>ただいまの回数</p>
+      <h2 id="count">0回</h2>
+      <div class="btn-gray" id="pauseBtn">
+      中断
+    </div>
+    </div>
+    
+    <p>認識されたことば</p>
+    <div class="recognition-area">
+    <div id="recognizedWords"></div>
+    </div>
+    
+    <div class="align-center">
+      <div class="btn-green" id="finishBtn">
+      おわる
+      </div>
+    </div>
+
+    <script>
+const SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+const recognition =
+  new SpeechRecognition();
+recognition.lang = "ja-JP";
+recognition.continuous = true;
+recognition.interimResults = false;
+
+const recognizedWords =
+  document.getElementById(
+    "recognizedWords"
+  );
+
+const finishBtn =
+  document.getElementById("finishBtn");
+      
+const pauseBtn =
+  document.getElementById("pauseBtn");
+const status =
+  document.getElementById("status");
+
+      let count = 0;
+      let isPaused = false;
+      const startTime = Date.now();
+
+recognition.onresult = function(event){
+  const text =
+    event.results[
+      event.results.length - 1
+    ][0].transcript.trim();
+  const p =
+    document.createElement("p");
+  if(text.includes("いらっしゃいませ") ||
+    text.includes("ありがとう")){
+    p.style.color = "red";
+    count++;
+    updateCount();
+  }
+
+  recognition.onend = function(){
+  if(!isPaused){
+    recognition.start();
+  }
+};
+  
+  p.textContent = text;
+  recognizedWords.appendChild(p);
+  recognizedWords.scrollTop =
+    recognizedWords.scrollHeight;
+
+};
+
+  function updateCount(){
+  document.getElementById("count")
+    .textContent = count + "回";
+}
+      
+window.onload = function(){
+  recognition.start();
+};
+
+pauseBtn.onclick = function(){
+  if(!isPaused){
+    recognition.stop();
+    status.textContent =
+      "中断中";
+    pauseBtn.textContent =
+      "再開";
+    isPaused = true;
+  }else{
+    recognition.start();
+    status.textContent =
+      "計測中…";
+    pauseBtn.textContent =
+      "中断";
+    isPaused = false;
+  }
+
+};
+      
+ finishBtn.onclick = function(){
+  const result =
+    confirm(
+      "本当に終わりますか？"
+    );
+  if(result){
+    sessionStorage.setItem(
+      "count",
+      count
+    );
+    sessionStorage.setItem(
+      "startTime",
+      startTime
+    );
+    sessionStorage.setItem(
+      "endTime",
+      Date.now()
+    );
+    location.href =
+      "result.html";
+  }
+};     
+</script>
+  </body>
+</html>

@@ -1,0 +1,157 @@
+@charset "UTF-8";
+body {
+    background-color: #f5f5f5;
+    font-family: "Hiragino Sans", "ヒラギノ角ゴシック";
+   color: #383839;
+  max-width: 736px;
+}
+a{
+  text-decoration: none;
+}
+img{
+  max-width: 100%;
+}
+.align-center{
+  text-align: center;
+}
+.head{
+   color: #383839;
+   font-size: 12px;
+   font-weight: 400;
+   text-align: right;
+}
+.header-info{
+    border-bottom: 2px solid #5da031;
+}
+.card {
+    background-color: #ffffff;
+    margin: 16px;
+    padding: 16px;
+    border-radius:16px;
+    box-shadow:0 2px 4px #6b6b6b;
+}
+.counter-circle{
+  width:220px;
+  height:220px;
+
+  margin:auto;
+
+  border-radius:50%;
+
+  background:#f6f6f6;
+
+  box-shadow:
+      0 3px 8px rgba(0,0,0,.25);
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+.recognition-area{
+  background-color:#ffffff;
+  margin:16px;
+  padding:12px;
+  border-radius:16px;
+  box-shadow:0 2px 4px #6b6b6b;
+}
+
+#recognizedWords{
+  height:120px;
+  overflow-y:auto;
+  margin-top:8px;
+}
+
+#recognizedWords p{
+  line-height:1.4;
+  margin:4px 0;
+}
+
+.result-tree{
+  width:120px;
+  margin:16px auto;
+}
+
+.result-number{
+  text-align:center;
+}
+
+.result-chart{
+  margin-top:16px;
+}
+
+#treeArea{
+  height:250px;
+  overflow:hidden;
+  text-align:center;
+}
+
+.tree-grow{
+  width:220px;
+  display:block;
+  margin:auto;
+}
+
+.grow-animation{
+  animation:growTree 2s ease-out forwards;
+}
+@keyframes growTree{
+  from{
+    clip-path: inset(100% 0 0 0);
+  }
+  to{
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.hidden{
+  opacity:0;
+}
+.show{
+  opacity:1;
+  transition:1s;
+}
+
+.btn-green{
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 700;
+  background-color: #5da031;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 2px 8px;
+  margin: 8px;
+  box-shadow: 0 2px 4px #6b6b6b;
+  transition: .5s;
+}
+.btn-green:hover{
+  background-color: #406c23;
+}
+.btn-gray{
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 500;
+  background-color: #c7c7c6;
+  color: #000000;
+  border-radius: 8px;
+  padding: 2px 8px;
+  margin: 8px;
+  box-shadow: 0 2px 4px #6b6b6b;
+  transition: .5s;
+}
+.btn-gray:hover{
+  background-color: #a6a7a5;
+}
+
+h1{margin:0 0 12px;
+   font-size: 20px;
+   font-family: "Hiragino Sans", "ヒラギノ角ゴシック";
+   font-weight: 700;
+  }
+p{
+  color: #383839;
+  font-size:16px;
+  font-family: "Hiragino Sans", "ヒラギノ角ゴシック";
+  font-weight: 500;
+  line-height:0.5;
+}
